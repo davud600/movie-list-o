@@ -1,7 +1,10 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import { type MovieContextType, useMovies } from ".././MoviesContext";
-import { type Movie } from "../movies";
+import {
+    type MovieContextType,
+    useMovies,
+    type Movie,
+} from ".././MoviesContext";
 import { type Dispatch, type SetStateAction, useState } from "react";
 
 interface MoviesListProps {
