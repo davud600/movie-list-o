@@ -100,7 +100,7 @@ const Home: NextPage = () => {
                 <link rel="icon" href="/favicon.ico" />
             </Head>
 
-            {/* <div id="stars"></div> */}
+            <div id="stars"></div>
             {/* <div id="stars2"></div> */}
             {/* <div id="stars3"></div> */}
 
@@ -108,13 +108,13 @@ const Home: NextPage = () => {
                 <AddMoviePortal setState={setAddMoviePortalOpen} />
             )}
 
-            <main className="flex min-h-screen flex-col items-center justify-center overflow-x-hidden px-3 md:px-6">
-                <section className="flex h-[80vh] flex-col items-start justify-center md:h-[60vh]">
+            <main className="flex min-h-screen flex-col items-center justify-start overflow-x-hidden px-3 md:px-6">
+                <section className="flex h-full flex-col items-start justify-center gap-10 py-10 md:gap-14 md:py-14">
                     <h1 className="text-center text-xl font-black text-gray-200 md:text-3xl">
                         Welcome to Olsa&apos;s 🪐 movie recommendation list!
                     </h1>
                     <div className="flex h-full w-full flex-col items-center justify-center">
-                        <div className="mb-8 flex w-full flex-col items-center justify-between gap-4 md:mb-10 md:flex-row md:gap-6">
+                        <div className="mb-8 flex w-full flex-col items-center justify-between gap-6 md:mb-10 md:flex-row">
                             <button
                                 onClick={() => alert("🌷")}
                                 className="flex items-center justify-center"
@@ -138,8 +138,17 @@ const Home: NextPage = () => {
                                 }
                                 className="flex items-center justify-center"
                             >
-                                <span className="cursor-pointer text-base font-medium text-neutral-400 transition-all hover:text-neutral-200 md:text-lg">
-                                    Add movie to list +
+                                <span className="flex cursor-pointer items-center justify-center gap-3 fill-neutral-400 text-base font-medium text-neutral-400 transition-all hover:fill-neutral-200 hover:text-neutral-200 md:gap-5 md:text-lg">
+                                    Add movie to list{" "}
+                                    <span>
+                                        <svg
+                                            className="h-4 w-4 md:h-5 md:w-5"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 448 512"
+                                        >
+                                            <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
+                                        </svg>
+                                    </span>
                                 </span>
                             </button>
                             <div className="flex items-center justify-center md:hidden">
@@ -148,8 +157,10 @@ const Home: NextPage = () => {
                                 </h2>
                             </div>
                         </div>
-                        <MoviesList moviesList={moviesList} />
                     </div>
+                </section>
+                <section className="flex h-full w-full items-center justify-center pb-[50rem] md:pb-96">
+                    <MoviesList moviesList={moviesList} />
                 </section>
             </main>
         </>
