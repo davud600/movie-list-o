@@ -63,11 +63,11 @@ const MoviesProvider = ({ children }: { children: ReactNode }) => {
 
     useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const list: Movie[] | undefined = data.data?.list;
+        const list: any = data.data?.list;
 
         if (!!!list) return;
 
-        setMoviesList(list);
+        setMoviesList(list as Movie[]);
     }, [data]);
 
     const createMovieId = () => {
