@@ -75,15 +75,15 @@ const MoviesProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const addMovieToList: UpdateList = (movie: Movie) => {
-        addMovie.mutate(movie);
+        addMovie.mutate(movie as unknown as void);
     };
 
     const updateMovieInList: UpdateList = (movie: Movie) => {
-        updateMovie.mutate(movie);
+        updateMovie.mutate(movie as unknown as void);
     };
 
     const removeMovieFromList: UpdateList = (movie: Movie) => {
-        deleteMovie.mutate(movie);
+        deleteMovie.mutate(movie as unknown as void);
     };
 
     const value: MovieContextType = {
