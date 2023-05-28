@@ -43,7 +43,23 @@ type UpdateList = (movie: Movie) => void;
 
 const MoviesProvider = ({ children }: { children: ReactNode }) => {
     const [moviesList, setMoviesList] = useState<Movie[]>([]);
+
     const data = api.movies.getAll.useQuery();
+    const addMovie = api.movies.addMovie.useMutation({
+        onSuccess: async () => {
+            await data.refetch();
+        },
+    });
+    const updateMovie = api.movies.updateMovie.useMutation({
+        onSuccess: async () => {
+            await data.refetch();
+        },
+    });
+    const deleteMovie = api.movies.deleteMovie.useMutation({
+        onSuccess: async () => {
+            await data.refetch();
+        },
+    });
 
     useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -59,23 +75,15 @@ const MoviesProvider = ({ children }: { children: ReactNode }) => {
     };
 
     const addMovieToList: UpdateList = (movie: Movie) => {
-        setMoviesList((prevMoviesList) => [movie, ...prevMoviesList]);
+        addMovie.mutate(movie as unknown as void);
     };
 
     const updateMovieInList: UpdateList = (movie: Movie) => {
-        setMoviesList((prevMoviesList: Movie[]) =>
-            prevMoviesList.filter((movieIt: Movie) =>
-                movieIt.id === movie.id ? movie : movieIt
-            )
-        );
+        updateMovie.mutate(movie as unknown as void);
     };
 
     const removeMovieFromList: UpdateList = (movie: Movie) => {
-        setMoviesList((prevMoviesList: Movie[]) =>
-            prevMoviesList.filter(
-                (listMovie: Movie) => listMovie.id != movie.id
-            )
-        );
+        deleteMovie.mutate(movie as unknown as void);
     };
 
     const value: MovieContextType = {

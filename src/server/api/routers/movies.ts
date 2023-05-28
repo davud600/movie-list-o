@@ -1,5 +1,4 @@
 import * as fs from "fs";
-import { z } from "zod";
 import { type Movie } from "~/MoviesContext";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
@@ -13,27 +12,65 @@ export const moviesRouter = createTRPCRouter({
         return { list };
     }),
 
-    // addMovie: publicProcedure
-    //     .input(
-    //         z.object({
-    //             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    //             movie,
-    //         })
-    //     )
-    //     .query(({ input }) => {
-    //         const jsonString: string = fs.readFileSync("movies.json", "utf-8");
+    addMovie: publicProcedure.mutation((req) => {
+        const jsonString: string = fs.readFileSync("movies.json", "utf-8");
 
-    //         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    //         let { list }: { list: Movie[] } = JSON.parse(jsonString);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        let { list }: { list: Movie[] } = JSON.parse(jsonString);
 
-    //         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    //         list = [input.movie, ...list];
+        list = [req.rawInput as unknown as Movie, ...list];
 
-    //         const json = JSON.stringify({ list });
-    //         fs.writeFile("movies.json", json, "utf8", () => false);
+        const json = JSON.stringify({ list });
+        fs.writeFile("movies.json", json, "utf8", () => false);
 
-    //         return {
-    //             list,
-    //         };
-    //     }),
+        const addedMovie: Movie = req.rawInput as unknown as Movie;
+
+        return { addedMovie };
+    }),
+
+    updateMovie: publicProcedure.mutation((req) => {
+        const jsonString: string = fs.readFileSync("movies.json", "utf-8");
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const movie = req.rawInput;
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const { list }: { list: Movie[] } = JSON.parse(jsonString);
+
+        list.forEach((movieIt: Movie, index: number) => {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+            if (movie.id === movieIt.id) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                list[index] = movie;
+            }
+        });
+
+        const json = JSON.stringify({ list });
+        fs.writeFile("movies.json", json, "utf8", () => false);
+
+        const updatedMovie: Movie = movie as unknown as Movie;
+
+        return { updatedMovie };
+    }),
+
+    deleteMovie: publicProcedure.mutation((req) => {
+        const jsonString: string = fs.readFileSync("movies.json", "utf-8");
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const movie = req.rawInput;
+
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        let { list }: { list: Movie[] } = JSON.parse(jsonString);
+
+        list = list.filter(
+            (movieIt: Movie) =>
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+                movie.id !== movieIt.id
+        );
+
+        const json = JSON.stringify({ list });
+        fs.writeFile("movies.json", json, "utf8", () => false);
+
+        const deletedMovie: Movie = movie as unknown as Movie;
+
+        return { deletedMovie };
+    }),
 });

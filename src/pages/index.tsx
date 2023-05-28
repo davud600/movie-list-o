@@ -19,25 +19,24 @@ import { useOutsideClickDetector } from "~/utils/outsideClick";
 interface MoviesListProps {
     moviesList: Movie[];
     openEditMoviePortal: (movie: Movie) => void;
+    openDeleteMoviePortal: (movie: Movie) => void;
 }
 
-const MoviesList: ({
+const MoviesList = ({
     moviesList,
     openEditMoviePortal,
-}: MoviesListProps) => JSX.Element = ({
-    moviesList,
-    openEditMoviePortal,
+    openDeleteMoviePortal,
 }: MoviesListProps) => {
     return (
         <ul className="max-w-md list-inside list-disc space-y-7 text-lg text-neutral-200 md:text-xl">
             {moviesList.map((movie: Movie) => (
-                <li key={movie.id} className="flex flex-col gap-1">
-                    <div className="flex justify-between">
+                <li key={movie.name} className="flex flex-col gap-1">
+                    <div className="flex justify-between gap-3">
                         <button
                             onClick={() => openEditMoviePortal(movie)}
-                            className="flex gap-2"
+                            className="flex gap-2 text-start"
                         >
-                            • {movie.name}{" "}
+                            <span>•</span> {movie.name}{" "}
                             <svg
                                 className="h-4 w-4 fill-white md:h-5 md:w-5"
                                 xmlns="http://www.w3.org/2000/svg"
@@ -46,7 +45,20 @@ const MoviesList: ({
                                 <path d="M441 58.9L453.1 71c9.4 9.4 9.4 24.6 0 33.9L424 134.1 377.9 88 407 58.9c9.4-9.4 24.6-9.4 33.9 0zM209.8 256.2L344 121.9 390.1 168 255.8 302.2c-2.9 2.9-6.5 5-10.4 6.1l-58.5 16.7 16.7-58.5c1.1-3.9 3.2-7.5 6.1-10.4zM373.1 25L175.8 222.2c-8.7 8.7-15 19.4-18.3 31.1l-28.6 100c-2.4 8.4-.1 17.4 6.1 23.6s15.2 8.5 23.6 6.1l100-28.6c11.8-3.4 22.5-9.7 31.1-18.3L487 138.9c28.1-28.1 28.1-73.7 0-101.8L474.9 25C446.8-3.1 401.2-3.1 373.1 25zM88 64C39.4 64 0 103.4 0 152V424c0 48.6 39.4 88 88 88H360c48.6 0 88-39.4 88-88V312c0-13.3-10.7-24-24-24s-24 10.7-24 24V424c0 22.1-17.9 40-40 40H88c-22.1 0-40-17.9-40-40V152c0-22.1 17.9-40 40-40H200c13.3 0 24-10.7 24-24s-10.7-24-24-24H88z" />
                             </svg>
                         </button>
-                        <span>{rating(movie.rating || 0)}</span>
+                        <div className="flex items-center gap-3">
+                            <span>{rating(movie.rating || 0)}</span>
+                            <button
+                                onClick={() => openDeleteMoviePortal(movie)}
+                            >
+                                <svg
+                                    className="h-3 w-3 fill-neutral-500 transition-all hover:fill-neutral-300 md:h-4 md:w-4"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 384 512"
+                                >
+                                    <path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                     <span className="text-sm text-neutral-400 md:text-base">
                         - {movie.review}
@@ -54,6 +66,64 @@ const MoviesList: ({
                 </li>
             ))}
         </ul>
+    );
+};
+
+const DeleteMoviePortal = ({
+    setState,
+    movie,
+}: {
+    setState: Dispatch<SetStateAction<boolean>>;
+    movie: Movie;
+}) => {
+    const { removeMovieFromList } = useMovies();
+
+    const deleteMoviePortalRef = useRef<HTMLDivElement>(null);
+
+    useOutsideClickDetector(deleteMoviePortalRef, () => setState(false));
+
+    return (
+        <div
+            ref={deleteMoviePortalRef}
+            className="absolute left-1/2 top-1/2 z-20 -ml-[8.75rem] -mt-[8.75rem] h-[17.5rem] w-[17.5rem] rounded-sm border border-neutral-700 bg-neutral-900 shadow-[0_0_0_1000px_rgba(0,0,0,.3)] md:-ml-[15rem] md:-mt-[12.5rem] md:h-[30rem] md:w-[35rem]"
+        >
+            <div className="flex w-full justify-end p-2 md:p-5">
+                <button onClick={() => setState(false)}>
+                    <svg
+                        className="h-4 w-4 fill-neutral-400 md:h-8 md:w-8"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 384 512"
+                    >
+                        <path d="M376.6 84.5c11.3-13.6 9.5-33.8-4.1-45.1s-33.8-9.5-45.1 4.1L192 206 56.6 43.5C45.3 29.9 25.1 28.1 11.5 39.4S-3.9 70.9 7.4 84.5L150.3 256 7.4 427.5c-11.3 13.6-9.5 33.8 4.1 45.1s33.8 9.5 45.1-4.1L192 306 327.4 468.5c11.3 13.6 31.5 15.4 45.1 4.1s15.4-31.5 4.1-45.1L233.7 256 376.6 84.5z" />
+                    </svg>
+                </button>
+            </div>
+            <div className="-mt-2 flex w-full flex-col items-center justify-center gap-2 p-2 text-center md:mt-0 md:p-5">
+                <span className="mb-20 text-base text-neutral-200 md:text-lg">
+                    Are you sure you want to remove this movie?
+                </span>
+
+                <div className="flex w-full flex-col gap-4">
+                    <button
+                        onClick={() => {
+                            removeMovieFromList(movie);
+                            setState(false);
+                        }}
+                        className="w-full rounded-sm bg-green-700 py-2 text-base text-neutral-300 transition-all hover:bg-green-800 hover:text-neutral-200 md:py-3 md:text-lg"
+                    >
+                        Yes I&apos;m sure
+                    </button>
+                    <button
+                        onClick={() => {
+                            setState(false);
+                        }}
+                        className="w-full rounded-sm bg-blue-700 py-2 text-base text-neutral-300 transition-all hover:bg-blue-800 hover:text-neutral-200 md:py-3 md:text-lg"
+                    >
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
     );
 };
 
@@ -123,7 +193,7 @@ const EditMoviePortal = ({
                             type="text"
                             id="movieReview"
                             name="movieReview"
-                            placeholder="Movie Name"
+                            placeholder="Your Review..."
                             className="block w-full rounded-sm border border-gray-600 bg-gray-700 p-2 text-sm text-gray-400 placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500 md:mb-6 md:p-2.5"
                             value={movieReview}
                             onChange={(e) => setMovieReview(e.target.value)}
@@ -233,7 +303,7 @@ const AddMoviePortal = ({
                             type="text"
                             id="movieReview"
                             name="movieReview"
-                            placeholder="Movie Name"
+                            placeholder="Your Review..."
                             className="block w-full rounded-sm border border-gray-600 bg-gray-700 p-2 text-sm text-gray-400 placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500 md:mb-6 md:p-2.5"
                             value={movieReview}
                             onChange={(e) => setMovieReview(e.target.value)}
@@ -269,6 +339,8 @@ const AddMoviePortal = ({
                         addMovieToList({
                             id: createMovieId(),
                             name: movieName,
+                            rating: movieRating,
+                            review: movieReview,
                         });
                         setState(false);
                     }}
@@ -288,8 +360,13 @@ const Home: NextPage = () => {
         useState<boolean>(false);
     const [editMoviePortalOpen, setEditMoviePortalOpen] =
         useState<boolean>(false);
+    const [deleteMoviePortalOpen, setDeleteMoviePortalOpen] =
+        useState<boolean>(false);
 
     const [movieEditing, setMovieEditing] = useState<Movie>(
+        moviesList[0] as Movie
+    );
+    const [movieDeleting, setMovieDeleting] = useState<Movie>(
         moviesList[0] as Movie
     );
 
@@ -317,6 +394,13 @@ const Home: NextPage = () => {
                 <EditMoviePortal
                     setState={setEditMoviePortalOpen}
                     movie={movieEditing}
+                />
+            )}
+
+            {deleteMoviePortalOpen && (
+                <DeleteMoviePortal
+                    setState={setDeleteMoviePortalOpen}
+                    movie={movieDeleting}
                 />
             )}
 
@@ -377,6 +461,10 @@ const Home: NextPage = () => {
                         openEditMoviePortal={(movie) => {
                             setEditMoviePortalOpen(true);
                             setMovieEditing(movie);
+                        }}
+                        openDeleteMoviePortal={(movie) => {
+                            setDeleteMoviePortalOpen(true);
+                            setMovieDeleting(movie);
                         }}
                     />
                 </section>
