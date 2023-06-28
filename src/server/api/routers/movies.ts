@@ -9,7 +9,8 @@ export const moviesRouter = createTRPCRouter({
         // // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         // const { list }: { list: Movie[] } = JSON.parse(jsonString);
 
-        const { rows: list } = await sql`select * from movies;`;
+        const { rows: list } =
+            await sql`select * from movies order by id desc;`;
 
         return { list };
     }),
